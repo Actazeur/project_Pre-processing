@@ -1,0 +1,20 @@
+clc
+%Read data to matrix
+M = csvread("C:\Users\ole-1\Documents\Skole\Project\processed data\2021_09_21_12_42_12_476\9.txt");
+%plot figure based on matrix
+figure
+imshow(M)
+ 
+J = filter2(fspecial('sobel'),M)
+min_matrix = min(J(:))
+max_matrix = max(J(:))
+ 
+figure
+imshow(J)
+ 
+K = mat2gray(J);
+min_image = min(K(:))
+max_image = max(K(:))
+ 
+figure
+imshow(K)
