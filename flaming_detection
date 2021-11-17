@@ -1,0 +1,38 @@
+clc
+digitDatasetPath = fullfile('C:\Users\ole-1\Documents\Skole\Project\flamingdata\croped\croped');
+imds = imageDatastore(digitDatasetPath, ...
+    'IncludeSubfolders', true, 'labelSource', 'foldernames')
+
+
+%Load training data
+trainingSetup = load("C:\Users\ole-1\Documents\Skole\Project\trainingSetup_2021_11_02__15_26_53.mat");
+%Import training and validation data
+imdsTrain = trainingSetup.imdsTrain;
+[imdsTrain, imdsValidation] = splitEachLabel(imdsTrain,0.7,"randomized");
+
+% Resize the images to match the network input layer.
+augimdsTrain = augmentedImageDatastore([369 129 3],imdsTrain);
+augimdsValidation = augmentedImageDatastore([369 129 3],imdsValidation);
+%Training options
+opts = trainingOptions("sgdm",...
+    "ExecutionEnvironment","auto",...
+    "InitialLearnRate",0.01,...
+    "MaxEpochs",50,...
+    "Shuffle","every-epoch",...
+    "Plots","training-progress",...
+    "ValidationData",augimdsValidation);
+%Create array of Layers
+layers = [
+    imageInputLayer([369 129 3],"Name","imageinput")
+    convolution2dLayer([3 3],32,"Name","conv","Padding","same")
+    batchNormalizationLayer("Name","batchnorm")
+    reluLayer("Name","relu")
+    fullyConnectedLayer(2,"Name","fc")
+    softmaxLayer("Name","softmax")
+    classificationLayer("Name","classoutput")];
+%Train network
+[net, traininfo] = trainNetwork(augimdsTrain,layers,opts);
+%load test data
+imds_test = imread('C:\Users\ole-1\Documents\Skole\Project\flamingdata\test\t0.png')
+%Predict with network
+Ypred = predict(net, imds_test)
