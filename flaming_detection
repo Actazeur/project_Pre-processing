@@ -1,3 +1,4 @@
+%Code is automatically generated using DeepLearningToolBox in MATLAB
 clc
 digitDatasetPath = fullfile('C:\Users\ole-1\Documents\Skole\Project\flamingdata\croped\croped');
 imds = imageDatastore(digitDatasetPath, ...
